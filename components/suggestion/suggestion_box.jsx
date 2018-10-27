@@ -376,8 +376,10 @@ export default class SuggestionBox extends React.Component {
         let selectionIndex = this.state.terms.indexOf(this.state.selection);
 
         if (selectionIndex === -1) {
-            // this should never happen since selection should always be in terms
-            throw new Error('selection is not in terms');
+            this.setState({
+                selection: '',
+            });
+            return;
         }
 
         selectionIndex += delta;
