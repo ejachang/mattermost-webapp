@@ -17,6 +17,7 @@ exports[`components/create_post Show tutorial 1`] = `
         className="post-body__cell"
       >
         <Textbox
+          badConnection={false}
           channelId="owsyt8n43jfxjpzh9np93mx1wa"
           characterLimit={4000}
           createMessage="Write a message..."
@@ -181,6 +182,7 @@ exports[`components/create_post should match snapshot for center textbox 1`] = `
         className="post-body__cell"
       >
         <Textbox
+          badConnection={false}
           channelId="owsyt8n43jfxjpzh9np93mx1wa"
           characterLimit={4000}
           createMessage="Write a message..."
@@ -314,6 +316,7 @@ exports[`components/create_post should match snapshot for read only channel 1`] 
         className="post-body__cell"
       >
         <Textbox
+          badConnection={false}
           channelId="owsyt8n43jfxjpzh9np93mx1wa"
           characterLimit={4000}
           createMessage="This channel is read-only. Only members with permission can post here."
@@ -414,6 +417,7 @@ exports[`components/create_post should match snapshot when file upload disabled 
         className="post-body__cell"
       >
         <Textbox
+          badConnection={false}
           channelId="owsyt8n43jfxjpzh9np93mx1wa"
           characterLimit={4000}
           createMessage="Write a message..."
@@ -547,6 +551,7 @@ exports[`components/create_post should match snapshot, init 1`] = `
         className="post-body__cell"
       >
         <Textbox
+          badConnection={false}
           channelId="owsyt8n43jfxjpzh9np93mx1wa"
           characterLimit={4000}
           createMessage="Write a message..."

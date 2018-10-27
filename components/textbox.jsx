@@ -15,7 +15,6 @@ import CommandProvider from 'components/suggestion/command_provider.jsx';
 import EmoticonProvider from 'components/suggestion/emoticon_provider.jsx';
 import SuggestionBox from 'components/suggestion/suggestion_box.jsx';
 import SuggestionList from 'components/suggestion/suggestion_list.jsx';
-import ErrorStore from 'stores/error_store.jsx';
 import Constants from 'utils/constants.jsx';
 import * as Utils from 'utils/utils.jsx';
 
@@ -40,6 +39,7 @@ export default class Textbox extends React.Component {
         popoverMentionKeyClick: PropTypes.bool,
         characterLimit: PropTypes.number.isRequired,
         disabled: PropTypes.bool,
+        badConnection: PropTypes.bool,
     };
 
     static defaultProps = {
@@ -51,9 +51,7 @@ export default class Textbox extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = {
-            connection: '',
-        };
+        this.state = {};
 
         this.suggestionProviders = [
             new AtMentionProvider(this.props.channelId),
@@ -65,26 +63,8 @@ export default class Textbox extends React.Component {
         }
     }
 
-    componentDidMount() {
-        ErrorStore.addChangeListener(this.onReceivedError);
-    }
-
     UNSAFE_componentWillMount() { // eslint-disable-line camelcase
         this.checkMessageLength(this.props.value);
-    }
-
-    componentWillUnmount() {
-        ErrorStore.removeChangeListener(this.onReceivedError);
-    }
-
-    onReceivedError = () => {
-        const errorCount = ErrorStore.getConnectionErrorCount();
-
-        if (errorCount > 1) {
-            this.setState({connection: 'bad-connection'});
-        } else {
-            this.setState({connection: ''});
-        }
     }
 
     handleChange = (e) => {
@@ -279,8 +259,8 @@ export default class Textbox extends React.Component {
         if (this.props.emojiEnabled) {
             textboxClassName += ' custom-textarea--emoji-picker';
         }
-        if (this.state.connection) {
-            textboxClassName += ' ' + this.state.connection;
+        if (this.props.badConnection) {
+            textboxClassName += ' bad-connection';
         }
         if (this.state.preview) {
             textboxClassName += ' custom-textarea--preview';

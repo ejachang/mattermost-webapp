@@ -10,6 +10,8 @@ import {
     viewChannel,
 } from 'mattermost-redux/actions/channels';
 import {setServerVersion} from 'mattermost-redux/actions/general';
+import {clearErrors, logError} from 'mattermost-redux/actions/errors';
+
 import {getPosts, getProfilesAndStatusesForPosts, getCustomEmojiForReaction} from 'mattermost-redux/actions/posts';
 import * as TeamActions from 'mattermost-redux/actions/teams';
 import {getMe, getStatusesByIds, getProfilesByIds} from 'mattermost-redux/actions/users';
@@ -18,6 +20,8 @@ import {getCurrentUser, getCurrentUserId, getStatusForUserId} from 'mattermost-r
 import {getMyTeams} from 'mattermost-redux/selectors/entities/teams';
 import {getConfig} from 'mattermost-redux/selectors/entities/general';
 import {getChannel} from 'mattermost-redux/selectors/entities/channels';
+
+import {incrementWsErrorCount, resetWsErrorCount} from 'actions/views/system';
 
 import {browserHistory} from 'utils/browser_history';
 import {loadChannelsForCurrentUser} from 'actions/channel_actions.jsx';
@@ -28,7 +32,6 @@ import {loadProfilesForSidebar} from 'actions/user_actions.jsx';
 import AppDispatcher from 'dispatcher/app_dispatcher.jsx';
 import BrowserStore from 'stores/browser_store.jsx';
 import ChannelStore from 'stores/channel_store.jsx';
-import ErrorStore from 'stores/error_store.jsx';
 import PreferenceStore from 'stores/preference_store.jsx';
 import store from 'stores/redux_store.jsx';
 import TeamStore from 'stores/team_store.jsx';
@@ -135,9 +138,8 @@ export function reconnect(includeWebSocket = true) {
         TeamActions.getMyTeamUnreads()(dispatch, getState);
     }
 
-    ErrorStore.setConnectionErrorCount(0);
-    ErrorStore.clearLastError();
-    ErrorStore.emitChange();
+    dispatch(resetWsErrorCount());
+    dispatch(clearErrors());
 }
 
 let intervalId = '';
@@ -181,17 +183,14 @@ export function unregisterAllPluginWebSocketEvents(pluginId) {
 }
 
 function handleFirstConnect() {
-    ErrorStore.clearLastError();
-    ErrorStore.emitChange();
+    dispatch(clearErrors);
 }
 
 function handleClose(failCount) {
     if (failCount > MAX_WEBSOCKET_FAILS) {
-        ErrorStore.storeLastError({message: AnnouncementBarMessages.WEBSOCKET_PORT_ERROR});
+        dispatch(logError({type: 'critical', message: AnnouncementBarMessages.WEBSOCKET_PORT_ERROR}, true));
     }
-
-    ErrorStore.setConnectionErrorCount(failCount);
-    ErrorStore.emitChange();
+    dispatch(incrementWsErrorCount());
 }
 
 function handleEvent(msg) {
